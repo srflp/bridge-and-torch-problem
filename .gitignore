@@ -32,3 +32,10 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# IDEs
+.idea/
+.vscode/
+
+yarn.lock
+pnpm-lock.yaml
