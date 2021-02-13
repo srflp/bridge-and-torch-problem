@@ -1,6 +1,6 @@
 import { createMultiDimensionalArray, range } from './utils';
 
-interface Crossing {
+export interface Crossing {
   direction: 'left' | 'right';
   entityIds: number[];
   duration: number;
@@ -217,5 +217,9 @@ export default class DynamicProgramming {
       }
     }
     return sequenceOfCrossings;
+  }
+
+  getTravellingTimes() {
+    return this.travellingTimes;
   }
 }
