@@ -1,8 +1,8 @@
-import { createMultiDimensionalArray } from './utils';
+import { createMultiDimensionalArray, range } from './utils';
 
 interface Crossing {
   direction: 'left' | 'right';
-  entityRange: [number, number];
+  entityIds: number[];
   duration: number;
 }
 
@@ -31,9 +31,6 @@ export default class DynamicProgramming {
    A mixed trip is a trip that is neither pure nor nomadic (that is, a trip that involves both settlers and nomads).
    A full trip is a trip that has C elements and a non-full trip is one that has less than C elements.
   */
-  // [1,2,5,8]
-  // { i0: 0, j0: 4, t: 8 }
-  // 8
   private cost(i0: number, j0: number): number {
     let t = this.travellingTimes[j0 - 1];
     // console.log('>cost<');
@@ -141,9 +138,19 @@ export default class DynamicProgramming {
         e++;
       } else {
         console.log(`Forward Trip: nomads 1..${i}; settlers ${n - (this.capacity - i) + 1}..${n}`);
+        sequenceOfCrossings.push({
+          direction: 'right',
+          entityIds: [...range(0, i), ...range(n - (this.capacity - i), n)],
+          duration: this.travellingTimes[n - 1],
+        });
         e = e - (i - 1);
         n = n - (this.capacity - i);
         console.log(`Return Trip: nomad ${i}`);
+        sequenceOfCrossings.push({
+          direction: 'left',
+          entityIds: [i - 1],
+          duration: this.travellingTimes[i - 1],
+        });
         i--;
         /* unstack and schedule pure trips */
         while (i > 0) {
@@ -152,8 +159,18 @@ export default class DynamicProgramming {
               leadPureTrips[p - 1]
             }`,
           );
+          sequenceOfCrossings.push({
+            direction: 'right',
+            entityIds: range(leadPureTrips[p - 1] - this.capacity, leadPureTrips[p - 1]),
+            duration: this.travellingTimes[leadPureTrips[p - 1] - 1],
+          });
           p--;
           console.log(`Return Trip: nomad ${i}`);
+          sequenceOfCrossings.push({
+            direction: 'left',
+            entityIds: [i - 1],
+            duration: this.travellingTimes[i - 1],
+          });
           i--;
         }
       }
@@ -161,24 +178,18 @@ export default class DynamicProgramming {
     while (n !== 0) {
       let i = this.nomads[n - 1][e];
       console.log(`Forward Trip: 1..${n}`);
-      console.log(
-        `>to the right: ${this.travellingTimes.slice(0, n)} (${this.travellingTimes[n - 1]})`,
-      );
       sequenceOfCrossings.push({
         direction: 'right',
-        entityRange: [0, n],
+        entityIds: range(0, n),
         duration: this.travellingTimes[n - 1],
       });
       n = i;
       if (i > 0) {
         e = e - i + 1;
         console.log(`Return Trip: nomad ${i}`);
-        console.log(
-          `>to the left: ${this.travellingTimes[i - 1]} (${this.travellingTimes[i - 1]})`,
-        );
         sequenceOfCrossings.push({
           direction: 'left',
-          entityRange: [i - 1, i],
+          entityIds: [i - 1],
           duration: this.travellingTimes[i - 1],
         });
         i--;
@@ -189,25 +200,16 @@ export default class DynamicProgramming {
               leadPureTrips[p - 1]
             }`,
           );
-          console.log(
-            `>to the right: ${this.travellingTimes.slice(
-              leadPureTrips[p - 1] - this.capacity,
-              leadPureTrips[p - 1],
-            )} (${this.travellingTimes[leadPureTrips[p - 1] - 1]})`,
-          );
           sequenceOfCrossings.push({
             direction: 'right',
-            entityRange: [leadPureTrips[p - 1] - this.capacity, leadPureTrips[p - 1]],
+            entityIds: range(leadPureTrips[p - 1] - this.capacity, leadPureTrips[p - 1]),
             duration: this.travellingTimes[leadPureTrips[p - 1] - 1],
           });
           p--;
           console.log(`Return Trip: nomad ${i}`);
-          console.log(
-            `>to the left: ${this.travellingTimes[i - 1]} (${this.travellingTimes[i - 1]})`,
-          );
           sequenceOfCrossings.push({
             direction: 'left',
-            entityRange: [i - 1, i],
+            entityIds: [i - 1],
             duration: this.travellingTimes[i - 1],
           });
           i--;
