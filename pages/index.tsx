@@ -7,6 +7,7 @@ import Parameters from 'src/components/Parameters';
 import Greedy from '../src/algorithms/Greedy';
 import Algorithm from '../src/algorithms/Algorithm';
 import { AlgorithmType } from 'src/algorithms/types';
+import BruteForce from '../src/algorithms/BruteForce';
 
 export default function Home() {
   const [travellingTimes, setTravellingTimes] = useState([1, 2, 5, 8]);
@@ -23,7 +24,7 @@ export default function Home() {
         setSolution(new Greedy(travellingTimes, capacity));
         break;
       case AlgorithmType.Brute:
-        console.error('Brute selected, but not implemented');
+        setSolution(new BruteForce(travellingTimes, capacity));
         break;
     }
   }, [travellingTimes, capacity, algorithm]);

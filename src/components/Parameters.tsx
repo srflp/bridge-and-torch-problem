@@ -90,8 +90,8 @@ export default function Parameters({
       <FormLabel marginTop="10px">Algorithm: </FormLabel>
       <Select maxWidth="430px" onChange={handleAlgorithmChange} value={algorithm}>
         <option value={AlgorithmType.Dynamic}>Dynamic programming</option>
-        <option value={AlgorithmType.Greedy}>Greedy</option>
         <option value={AlgorithmType.Brute}>Brute force</option>
+        <option value={AlgorithmType.Greedy}>Greedy</option>
       </Select>
     </>
   );
