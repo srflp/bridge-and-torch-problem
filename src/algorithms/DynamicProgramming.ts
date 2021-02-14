@@ -1,19 +1,16 @@
 import { createMultiDimensionalArray, range } from './utils';
-
-export interface Crossing {
-  direction: 'left' | 'right';
-  entityIds: number[];
-  duration: number;
-}
+import { Crossing } from './types';
+import Algorithm from './Algorithm';
 
 // source: https://www.sciencedirect.com/science/article/pii/S0167642315000118
-export default class DynamicProgramming {
+export default class DynamicProgramming extends Algorithm {
   private readonly numberOfPeople: number;
   private readonly maxNoPureTrips: number;
   private readonly m: number[][];
   private readonly nomads: number[][];
 
   constructor(private travellingTimes: number[], private capacity: number) {
+    super();
     this.numberOfPeople = travellingTimes.length;
     this.maxNoPureTrips = Math.floor((this.numberOfPeople - 2) / capacity);
 
@@ -33,11 +30,9 @@ export default class DynamicProgramming {
   */
   private cost(i0: number, j0: number): number {
     let t = this.travellingTimes[j0 - 1];
-    // console.log('>cost<');
     for (let i = 1; i <= i0; i++) {
       t += this.travellingTimes[i - 1];
     }
-    // console.log({ i0, j0, t });
     return t;
   }
 
@@ -114,7 +109,7 @@ export default class DynamicProgramming {
     }
   }
 
-  getOptimalTime(): number {
+  getTotalTime(): number {
     return this.m[this.numberOfPeople - 1][0];
   }
 
@@ -137,7 +132,7 @@ export default class DynamicProgramming {
         n = n - this.capacity;
         e++;
       } else {
-        console.log(`Forward Trip: nomads 1..${i}; settlers ${n - (this.capacity - i) + 1}..${n}`);
+        // console.log(`Forward Trip: nomads 1..${i}; settlers ${n - (this.capacity - i) + 1}..${n}`);
         sequenceOfCrossings.push({
           direction: 'right',
           entityIds: [...range(0, i), ...range(n - (this.capacity - i), n)],
@@ -145,7 +140,7 @@ export default class DynamicProgramming {
         });
         e = e - (i - 1);
         n = n - (this.capacity - i);
-        console.log(`Return Trip: nomad ${i}`);
+        // console.log(`Return Trip: nomad ${i}`);
         sequenceOfCrossings.push({
           direction: 'left',
           entityIds: [i - 1],
@@ -154,18 +149,18 @@ export default class DynamicProgramming {
         i--;
         /* unstack and schedule pure trips */
         while (i > 0) {
-          console.log(
-            `Forward Trip: settlers ${leadPureTrips[p - 1] - this.capacity + 1}..${
-              leadPureTrips[p - 1]
-            }`,
-          );
+          // console.log(
+          //   `Forward Trip: settlers ${leadPureTrips[p - 1] - this.capacity + 1}..${
+          //     leadPureTrips[p - 1]
+          //   }`,
+          // );
           sequenceOfCrossings.push({
             direction: 'right',
             entityIds: range(leadPureTrips[p - 1] - this.capacity, leadPureTrips[p - 1]),
             duration: this.travellingTimes[leadPureTrips[p - 1] - 1],
           });
           p--;
-          console.log(`Return Trip: nomad ${i}`);
+          // console.log(`Return Trip: nomad ${i}`);
           sequenceOfCrossings.push({
             direction: 'left',
             entityIds: [i - 1],
@@ -177,7 +172,7 @@ export default class DynamicProgramming {
     }
     while (n !== 0) {
       let i = this.nomads[n - 1][e];
-      console.log(`Forward Trip: 1..${n}`);
+      // console.log(`Forward Trip: 1..${n}`);
       sequenceOfCrossings.push({
         direction: 'right',
         entityIds: range(0, n),
@@ -186,7 +181,7 @@ export default class DynamicProgramming {
       n = i;
       if (i > 0) {
         e = e - i + 1;
-        console.log(`Return Trip: nomad ${i}`);
+        // console.log(`Return Trip: nomad ${i}`);
         sequenceOfCrossings.push({
           direction: 'left',
           entityIds: [i - 1],
@@ -195,18 +190,18 @@ export default class DynamicProgramming {
         i--;
         // unstack and schedule pure trips
         while (i > 0) {
-          console.log(
-            `Forward Trip: settlers ${leadPureTrips[p - 1] - this.capacity + 1}..${
-              leadPureTrips[p - 1]
-            }`,
-          );
+          // console.log(
+          //   `Forward Trip: settlers ${leadPureTrips[p - 1] - this.capacity + 1}..${
+          //     leadPureTrips[p - 1]
+          //   }`,
+          // );
           sequenceOfCrossings.push({
             direction: 'right',
             entityIds: range(leadPureTrips[p - 1] - this.capacity, leadPureTrips[p - 1]),
             duration: this.travellingTimes[leadPureTrips[p - 1] - 1],
           });
           p--;
-          console.log(`Return Trip: nomad ${i}`);
+          // console.log(`Return Trip: nomad ${i}`);
           sequenceOfCrossings.push({
             direction: 'left',
             entityIds: [i - 1],

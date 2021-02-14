@@ -1,20 +1,32 @@
 import Head from 'next/head';
-import DynamicProgramming from '../src/algorithms/bridge-torch-dynamic';
-import { useEffect, useState } from 'react';
-import { Container, Heading, Text } from '@chakra-ui/react';
+import DynamicProgramming from '../src/algorithms/DynamicProgramming';
+import React, { useEffect, useState } from 'react';
+import { Container, Heading, Select, Text } from '@chakra-ui/react';
 import SolutionTable from 'src/components/SolutionTable';
 import Parameters from 'src/components/Parameters';
-
-export type Solution = DynamicProgramming;
+import Greedy from '../src/algorithms/Greedy';
+import Algorithm from '../src/algorithms/Algorithm';
+import { AlgorithmType } from 'src/algorithms/types';
 
 export default function Home() {
   const [travellingTimes, setTravellingTimes] = useState([1, 2, 5, 8]);
   const [capacity, setCapacity] = useState(2);
-  const [solution, setSolution] = useState<Solution>();
+  const [solution, setSolution] = useState<Algorithm>();
+  const [algorithm, setAlgorithm] = useState<AlgorithmType>(AlgorithmType.Dynamic);
 
   useEffect(() => {
-    setSolution(new DynamicProgramming(travellingTimes, capacity));
-  }, [travellingTimes, capacity]);
+    switch (algorithm) {
+      case AlgorithmType.Dynamic:
+        setSolution(new DynamicProgramming(travellingTimes, capacity));
+        break;
+      case AlgorithmType.Greedy:
+        setSolution(new Greedy(travellingTimes, capacity));
+        break;
+      case AlgorithmType.Brute:
+        console.error('Brute selected, but not implemented');
+        break;
+    }
+  }, [travellingTimes, capacity, algorithm]);
 
   return (
     <>
@@ -31,13 +43,15 @@ export default function Home() {
           setCapacity={setCapacity}
           travellingTimes={travellingTimes}
           setTravellingTimes={setTravellingTimes}
+          algorithm={algorithm}
+          setAlgorithm={setAlgorithm}
         />
         {solution ? (
           <>
             <Heading size="md" marginTop="20px" marginBottom="5px">
               Results
             </Heading>
-            <Text marginBottom="5px">Optimal time: {solution.getOptimalTime()}</Text>
+            <Text marginBottom="5px">Optimal time: {solution.getTotalTime()}</Text>
             <SolutionTable solution={solution} />
           </>
         ) : null}

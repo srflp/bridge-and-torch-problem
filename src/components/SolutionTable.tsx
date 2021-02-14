@@ -1,7 +1,7 @@
 import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import React from 'react';
-import { Crossing } from '../algorithms/bridge-torch-dynamic';
-import { Solution } from '../../pages';
+import { Crossing } from '../algorithms/types';
+import Algorithm from '../algorithms/Algorithm';
 
 interface TableData {
   timeElapsed: string;
@@ -51,11 +51,12 @@ const makeTableData = (sequenceOfCrossings: Crossing[], travellingTimes: number[
 };
 
 interface Props {
-  solution: Solution;
+  solution: Algorithm;
 }
 
 export default function SolutionTable({ solution }: Props) {
-  const tableData = makeTableData(solution.getSequenceOfCrossings(), solution.getTravellingTimes());
+  const seqOfCrossings = solution.getSequenceOfCrossings();
+  const tableData = makeTableData(seqOfCrossings, solution.getTravellingTimes());
   return (
     <Table size="sm" display="block" overflowX="auto">
       <Thead>
