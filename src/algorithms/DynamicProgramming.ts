@@ -18,7 +18,6 @@ export default class DynamicProgramming extends Algorithm {
     this.nomads = createMultiDimensionalArray(this.numberOfPeople, this.maxNoPureTrips + 1);
 
     this.findOptimalSolution();
-    console.log(this.m, this.nomads);
   }
 
   /*

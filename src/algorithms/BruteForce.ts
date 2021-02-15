@@ -127,9 +127,3 @@ const generate = (cap: number) => (s: Sol) => {
   const stepOne = _.flatten(s.goThereAll(cap)).map((el) => el.comebacks());
   return _.flatten(stepOne);
 };
-
-console.time('dbsave');
-const s = new BruteForce([1, 2, 5, 8], 2);
-console.timeEnd('dbsave');
-
-console.log(s.getTotalTime(), s.getSequenceOfCrossings());
