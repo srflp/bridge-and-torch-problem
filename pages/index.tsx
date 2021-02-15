@@ -52,7 +52,7 @@ export default function Home() {
             <Heading size="md" marginTop="20px" marginBottom="5px">
               Results
             </Heading>
-            <Text marginBottom="5px">Optimal time: {solution.getTotalTime()}</Text>
+            <Text marginBottom="5px">Total time: {solution.getTotalTime()}</Text>
             <SolutionTable solution={solution} />
           </>
         ) : null}
