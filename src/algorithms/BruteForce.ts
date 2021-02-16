@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import Algorithm from './Algorithm';
 import { Crossing } from './types';
-import { combinations } from './utils';
+// js-combinatorics is not compatible with Node,
+// thus BruteForce class should only be instantiated on the client-side.
+import { Combination } from 'js-combinatorics';
 
 type Transition = number[];
 
@@ -61,7 +63,7 @@ export default class BruteForce extends Algorithm {
   }
 
   generateAllSolutions() {
-    let sol = [new Sol(this.travellingTimes.map((el) => true))];
+    let sol = [new Sol(this.travellingTimes.map(() => true))];
 
     const STEPS = this.steps();
     for (let i = 0; i < STEPS; i++) sol = _.flatten(sol.map(generate(this.capacity)));
@@ -98,8 +100,8 @@ class Sol {
   }
 
   goThereAll(howMany: number) {
-    const possibilities = combinations(indicesWith(this.where, true), howMany);
-    return possibilities.map((pass) => _.cloneDeep(this).apply(pass));
+    const possibilities = new Combination(indicesWith(this.where, true), howMany);
+    return Array.from(possibilities, (pass) => _.cloneDeep(this).apply(pass));
   }
 
   comebacks(): Sol[] {

@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import DynamicProgramming from '../src/algorithms/DynamicProgramming';
 import React, { useEffect, useState } from 'react';
-import { Container, Heading, Select, Text } from '@chakra-ui/react';
+import { Container, Heading, Text } from '@chakra-ui/react';
 import SolutionTable from 'src/components/SolutionTable';
 import Parameters from 'src/components/Parameters';
 import Greedy from '../src/algorithms/Greedy';
@@ -24,6 +24,7 @@ export default function Home() {
         setSolution(new Greedy(travellingTimes, capacity));
         break;
       case AlgorithmType.Brute:
+        if (typeof window == 'undefined') break;
         setSolution(new BruteForce(travellingTimes, capacity));
         break;
     }
