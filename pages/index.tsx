@@ -24,8 +24,16 @@ export default function Home() {
         setSolution(new Greedy(travellingTimes, capacity));
         break;
       case AlgorithmType.Brute:
-        if (typeof window == 'undefined') break;
-        setSolution(new BruteForce(travellingTimes, capacity));
+        // js-combinatorics is broken and not compatible with Node,
+        // thus BruteForce class should only be instantiated on the client-side.
+        if (typeof window !== 'undefined') {
+          import('js-combinatorics').then(({Combination}) => {
+            // the worst hack ever
+            // @ts-ignore
+            window.Combination = Combination;
+            setSolution(new BruteForce(travellingTimes, capacity));
+          })
+        }
         break;
     }
   }, [travellingTimes, capacity, algorithm]);

@@ -1,9 +1,6 @@
 import _ from 'lodash';
 import Algorithm from './Algorithm';
 import { Crossing } from './types';
-// js-combinatorics is not compatible with Node,
-// thus BruteForce class should only be instantiated on the client-side.
-import { Combination } from 'js-combinatorics';
 
 type Transition = number[];
 
@@ -100,7 +97,9 @@ class Sol {
   }
 
   goThereAll(howMany: number) {
-    const possibilities = new Combination(indicesWith(this.where, true), howMany);
+    // the worst hack ever part 2
+    // @ts-ignore
+    const possibilities: [] = new window.Combination(indicesWith(this.where, true), howMany);
     return Array.from(possibilities, (pass) => _.cloneDeep(this).apply(pass));
   }
 
